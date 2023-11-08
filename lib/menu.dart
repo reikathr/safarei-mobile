@@ -62,7 +62,6 @@ class MyHomePage extends StatelessWidget {
     }
 }
 
-
 class InventoryItem {
   final String name;
   final IconData icon;
@@ -90,7 +89,6 @@ class InventoryCard extends StatelessWidget {
                 content: Text("Kamu telah menekan tombol ${item.name}!")));
         },
         child: Container(
-          // Container untuk menyimpan Icon dan Text
           padding: const EdgeInsets.all(8),
           child: Center(
             child: Column(
