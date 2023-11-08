@@ -11,37 +11,36 @@ Stateless widget adalah widget yang tidak akan pernah dan tidak bisa berubah. St
 <br>
 2. Sebutkan seluruh widget yang kamu gunakan untuk menyelesaikan tugas ini dan jelaskan fungsinya masing-masing.
 <br>
-<ul> MyApp: Widget yang menampilkan aplikasi secara keseluruhan </ul>
-<ul> MaterialApp: Widget yang digunakan untuk melakukan pengaturan tampilan aplikasi</ul>
-<ul> MyHomePage: Widget yang menampilkan homepage aplikasi</ul>
-<ul> Scaffold: Widget yang berperan sebagai kerangka visual untuk widget lain</ul>
-<ul> AppBar: Widget yang berperan sebagai bar di atas aplikasi </ul>
-<ul> Text: Widget yang menampilkan teks</ul>
-<ul> Padding: Widget yang menyediakan padding</ul>
-<ul> Column: Widget yang menampilkan anaknya secara vertikal</ul>
-<ul> GridView: Widget yang menampilkan anaknya dalam bentuk grid</ul>
-<ul> InventoryCard: Widget card yang menampilkan objek dari class InventoryItem</ul>
-<ul> SnackBar: Widget yang memunculkan teks sebagai pop-up di bawah layar</ul>
-<ul> Container: Widget yang menggabungkan berbagai widget painting, positioning, dan sizing</ul>
-<ul> Center: Widget yang menempatkan anak-anaknya di tengah</ul>
-<ul> Icon: Widget yang menampilkan simbol</ul>
+<li> MyApp: Widget yang menampilkan aplikasi secara keseluruhan </li>
+<li> MaterialApp: Widget yang digunakan untuk melakukan pengaturan tampilan aplikasi</li>
+<li> MyHomePage: Widget yang menampilkan homepage aplikasi</li>
+<li> Scaffold: Widget yang berperan sebagai kerangka visual untuk widget lain</li>
+<li> AppBar: Widget yang berperan sebagai bar di atas aplikasi </li>
+<li> Text: Widget yang menampilkan teks</li>
+<li> Padding: Widget yang menyediakan padding</li>
+<li> Column: Widget yang menampilkan anaknya secara vertikal</li>
+<li> GridView: Widget yang menampilkan anaknya dalam bentuk grid</li>
+<li> InventoryCard: Widget card yang menampilkan objek dari class InventoryItem</li>
+<li> SnackBar: Widget yang memunculkan teks sebagai pop-up di bawah layar</li>
+<li> Container: Widget yang menggabungkan berbagai widget painting, positioning, dan sizing</li>
+<li> Center: Widget yang menempatkan anak-anaknya di tengah</li>
+<li> Icon: Widget yang menampilkan simbol</li>
 <br>
 3. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)
 <br>
-- Membuka direktori safarei_mobile dan menjalankan `flutter create safarei_mobile` dan `cd safarei_mobile` di terminal
-- Membuka folder lib lalu membuat berkas baru bernama `menu.dart` yang berisi `import 'package:flutter/material.dart';` dan menambahkan kode `` ke `main.dart`.
-- Memindahkan class MyHomePage dari `main.dart` ke `menu.dart` dan menggantikan widgetnya dari StatefulWidget menjadi StatelessWidget. Dalam proses ini, melakukan modifikasi pada kode dalam main.dart dan menu.dart untuk menyesuaikan dengan perubahan tersebut seperti menghilangkan fungsi state dalam class MyHomePage.
-- Membuat kelas InventoryItem di `menu.dart` seperti berikut:
+<li>Membuka direktori safarei_mobile dan menjalankan `flutter create safarei_mobile` dan `cd safarei_mobile` di terminal</li><br>
+<li>Membuka folder lib lalu membuat berkas baru bernama `menu.dart` yang berisi `import 'package:flutter/material.dart';` dan menambahkan kode `` ke `main.dart`.</li><br>
+<li>Memindahkan class MyHomePage dari `main.dart` ke `menu.dart` dan menggantikan widgetnya dari StatefulWidget menjadi StatelessWidget. Dalam proses ini, melakukan modifikasi pada kode dalam main.dart dan menu.dart untuk menyesuaikan dengan perubahan tersebut seperti menghilangkan fungsi state dalam class MyHomePage.</li><br>
+<li>Membuat kelas InventoryItem di `menu.dart` seperti berikut:</li>
 ```
-class InventoryItem {
-  final String name;
-  final IconData icon;
-  final Color color;
+    class InventoryItem {
+    final String name;
+    final IconData icon;
+    final Color color;
 
-  InventoryItem(this.name, this.icon, this.color);
-}
-```
-- Memodifikasi MyHomePage menjadi seperti berikut:
+    InventoryItem(this.name, this.icon, this.color);
+    }
+<li>Memodifikasi MyHomePage menjadi seperti berikut:</li>
 ```
 class MyHomePage extends StatelessWidget {
     MyHomePage({Key? key}) : super(key: key);
@@ -104,8 +103,7 @@ class MyHomePage extends StatelessWidget {
     );
     }
 }
-```
-- Membuat class InventoryCard di `menu.dart`
+<li>Membuat class InventoryCard di `menu.dart`</li>
 ```
 class InventoryCard extends StatelessWidget {
   final InventoryItem item;
@@ -150,4 +148,3 @@ class InventoryCard extends StatelessWidget {
     );
   }
 }
-```
