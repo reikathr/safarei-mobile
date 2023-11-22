@@ -3,6 +3,7 @@
 **Kelas: PBP-F**<br>
 **NPM: 2206031422** <br>
 **A mobile version of Safarei Park.**
+[![Build status](https://build.appcenter.ms/v0.1/apps/69c9f698-c082-41d3-9df3-61e7ed39a08a/branches/main/badge)](https://appcenter.ms)
 
 <details>
 <summary>Tugas 7</summary>
