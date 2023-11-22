@@ -48,9 +48,9 @@ class SafareiAnimalPage extends StatelessWidget {
                 mainAxisSpacing: 10,
                 crossAxisCount: 3,
                 shrinkWrap: true,
-                children: animals.map((Animal animal) {
+                children: animals.map((Animalz animal) {
                   // Iterasi untuk setiap item
-                  return AnimalCard(animal);
+                  return AnimalzCard(animal);
                 }).toList(),
               ),
             ],

@@ -404,3 +404,384 @@ File dalam folder <code>lib</code> dibagi menjadi beberapa folder lagi, yaitu fo
 </li>
 </ol>
 </details>
+
+<details>
+<summary>Pertanyaan Tugas 9</summary>
+<ol>
+<li>Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?<br>
+Bisa. Akan tetapi, metode tersebut tidak lebih baik karena untuk data yang lebih kompleks, datanya sulit untuk dimaintain dan rawan terjadi error terkait type safety. Selain itu, apabila struktur JSON mengalami perubahan, kode dart untuk mengakses field-field yang spesifik harus diupdate satu-satu sehingga kurang efisien.
+</li>
+<li>Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.<br>
+CookieRequest berfungsi untuk mengelola cookies untuk request HTTP dan instancenya perlu dibagikan ke semya komponen aplikasi Flutter agar HTTP request dapat dilakukan setelah autentikasi sesuai dengan cookies.
+</li>
+<li>Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.<br>
+Flutter melakukan request HTTP GET ke URL JSON endpoint, lalu data yang diperolah akan di-parse dalam Flutter (ke dalam bentuk model apabila perlu), lalu data bisa digunakan dalam aplikasi Flutter.
+</li>
+<li>Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.<br>
+<ul>
+<li>User melakukan input data yang diminta saat login, yaitu username dan kata sandi.</li>
+<li>Flutter mengirim request dengan data tersebut ke Django melalui auth/login.</li>
+<li>Aplikasi Django melakukan autentikasi dengan data login dan mengirim response kembali ke Flutter.</li>
+<li>Aplikasi Flutter akan menerima response. Apabila response yang diterima menyatakan user berhasil login, aplikasi Flutter akan menampilkan homepage.</li>
+</ul>
+</li>
+<li>Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing<br>
+<ul>
+<li>LeftDrawer berfungsi untuk menampilkan widget drawer sebagai navigasi untuk mengakses halaman-halaman berbeda di aplikasi Flutter.</li>
+<li>SizedBox berfungsi untuk membuat box dengan ukuran tetap.</li>
+<li>FutureBuilder berfungsi untuk mengupdate diri sendiri sesuai data yang didapat dari snapshot terbaru.</li>
+<li>ListView berfungsi untuk menyusun widget seperti list yang scrollable.</li>
+<li>InkWell berfungsi untuk membuat widget yang responsif.</li>
+<li>ElevatedButton dan TextButton berfungsi sebagai tombol.</li>
+<li>AnimalzCard menampilkan data animal yang diinput melalui aplikasi Flutter dalam bentuk card.</li>
+<li>TextFormField berfungsi untuk menerima input.</li>
+</ul>
+</li>
+<li>Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).<br>
+<ul>
+<li>Memastikan deployment sudah jalan</li>
+<li>Membuat aplikasi dalam Django bernama authentication, menambahkannya ke INSTALLED_APPS di settings.py, dan menginstall beberapa dependencies dan melakukan konfigurasi di settings.py</li>
+<li>Membuat views login dan logout di aplikasi authentikasi</li>
+
+        from django.shortcuts import render
+        from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+        from django.http import JsonResponse
+        from django.views.decorators.csrf import csrf_exempt
+
+        @csrf_exempt
+        def login(request):
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    auth_login(request, user)
+                    # Status login sukses.
+                    return JsonResponse({
+                        "username": user.username,
+                        "status": True,
+                        "message": "Login sukses!"
+                        # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+                    }, status=200)
+                else:
+                    return JsonResponse({
+                        "status": False,
+                        "message": "Login gagal, akun dinonaktifkan."
+                    }, status=401)
+
+            else:
+                return JsonResponse({
+                    "status": False,
+                    "message": "Login gagal, periksa kembali email atau kata sandi."
+                }, status=401)
+
+        @csrf_exempt
+        def logout(request):
+            username = request.user.username
+
+            try:
+                auth_logout(request)
+                return JsonResponse({
+                    "username": username,
+                    "status": True,
+                    "message": "Logout berhasil!"
+                }, status=200)
+            except:
+                return JsonResponse({
+                "status": False,
+                "message": "Logout gagal."
+                }, status=401)
+<li>Membuat screens baru bernama login.dart</li>
+
+        import 'package:safarei_mobile/screens/menu.dart';
+        import 'package:flutter/material.dart';
+        import 'package:pbp_django_auth/pbp_django_auth.dart';
+        import 'package:provider/provider.dart';
+
+        void main() {
+            runApp(const LoginApp());
+        }
+
+        class LoginApp extends StatelessWidget {
+        const LoginApp({super.key});
+
+        @override
+        Widget build(BuildContext context) {
+            return MaterialApp(
+                title: 'Login',
+                theme: ThemeData(
+                    primarySwatch: Colors.yellow,
+            ),
+            home: const LoginPage(),
+            );
+            }
+        }
+
+        class LoginPage extends StatefulWidget {
+            const LoginPage({super.key});
+
+            @override
+            _LoginPageState createState() => _LoginPageState();
+        }
+
+        class _LoginPageState extends State<LoginPage> {
+            final TextEditingController _usernameController = TextEditingController();
+            final TextEditingController _passwordController = TextEditingController();
+
+            @override
+            Widget build(BuildContext context) {
+                final request = context.watch<CookieRequest>();
+                return Scaffold(
+                    appBar: AppBar(
+                        title: const Text('Login'),
+                    ),
+                    body: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                TextField(
+                                    controller: _usernameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Username',
+                                    ),
+                                ),
+                                const SizedBox(height: 12.0),
+                                TextField(
+                                    controller: _passwordController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Password',
+                                    ),
+                                    obscureText: true,
+                                ),
+                                const SizedBox(height: 24.0),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                        String username = _usernameController.text;
+                                        String password = _passwordController.text;
+
+                                        final response = await request.login("https://athira-reika-tugas.pbp.cs.ui.ac.id/auth/login/", {
+                                        'username': username,
+                                        'password': password,
+                                        });
+                            
+                                        if (request.loggedIn) {
+                                            String message = response['message'];
+                                            String uname = response['username'];
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => MyHomePage()),
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                ..hideCurrentSnackBar()
+                                                ..showSnackBar(
+                                                    SnackBar(content: Text("$message Selamat datang, $uname.")));
+                                            } else {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                    title: const Text('Login Gagal'),
+                                                    content:
+                                                        Text(response['message']),
+                                                    actions: [
+                                                        TextButton(
+                                                            child: const Text('OK'),
+                                                            onPressed: () {
+                                                                Navigator.pop(context);
+                                                            },
+                                                        ),
+                                                    ],
+                                                ),
+                                            );
+                                        }
+                                    },
+                                    child: const Text('Login'),
+                                ),
+                            ],
+                        ),
+                    ),
+                );
+            }
+        }
+
+<li>Membuat models bernama Animals dalam animals.dart dari JSON</li>
+
+        import 'dart:convert';
+
+        List<Animal> animalFromJson(String str) => List<Animal>.from(json.decode(str).map((x) => Animal.fromJson(x)));
+
+        String animalToJson(List<Animal> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+        class Animal {
+            String model;
+            int pk;
+            Fields fields;
+
+            Animal({
+                required this.model,
+                required this.pk,
+                required this.fields,
+            });
+
+            factory Animal.fromJson(Map<String, dynamic> json) => Animal(
+                model: json["model"],
+                pk: json["pk"],
+                fields: Fields.fromJson(json["fields"]),
+            );
+
+            Map<String, dynamic> toJson() => {
+                "model": model,
+                "pk": pk,
+                "fields": fields.toJson(),
+            };
+        }
+
+        class Fields {
+            int user;
+            String name;
+            int amount;
+            String family;
+            String animalClass;
+            String description;
+            String animalImage;
+
+            Fields({
+                required this.user,
+                required this.name,
+                required this.amount,
+                required this.family,
+                required this.animalClass,
+                required this.description,
+                required this.animalImage,
+            });
+
+            factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+                user: json["user"],
+                name: json["name"],
+                amount: json["amount"],
+                family: json["family"],
+                animalClass: json["animal_class"],
+                description: json["description"],
+                animalImage: json["animal_image"],
+            );
+
+            Map<String, dynamic> toJson() => {
+                "user": user,
+                "name": name,
+                "amount": amount,
+                "family": family,
+                "animal_class": animalClass,
+                "description": description,
+                "animal_image": animalImage,
+            };
+        }
+
+<li>Memodifikasi halaman form untuk dapat melakukan POST ke aplikasi Django.</li>
+<li>Membuat halaman yang dapat menampilkan data dari Django dan yang diinput lewat Flutter</li>
+        import 'package:flutter/material.dart';
+        import 'package:http/http.dart' as http;
+        import 'dart:convert';
+        import 'package:safarei_mobile/models/animals.dart';
+        import 'package:safarei_mobile/screens/animal_details.dart';
+        import 'package:safarei_mobile/widgets/left_drawer.dart';
+
+        class AnimalListPage extends StatefulWidget {
+            const AnimalListPage({Key? key}) : super(key: key);
+
+            @override
+            _AnimalListPageState createState() => _AnimalListPageState();
+        }
+
+        class _AnimalListPageState extends State<AnimalListPage> {
+        Future<List<Animal>> fetchAnimal() async {
+            var url = Uri.parse(
+                'https://athira-reika-tugas.pbp.cs.ui.ac.id/json/');
+            var response = await http.get(
+                url,
+                headers: {"Content-Type": "application/json"},
+            );
+
+            // melakukan decode response menjadi bentuk json
+            var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+            // melakukan konversi data json menjadi object Animal
+            List<Animal> list_animal = [];
+            for (var d in data) {
+                if (d != null) {
+                    list_animal.add(Animal.fromJson(d));
+                }
+            }
+            return list_animal;
+        }
+
+        @override
+        Widget build(BuildContext context) {
+            return Scaffold(
+                appBar: AppBar(
+                title: const Text('Animal'),
+                ),
+                drawer: const LeftDrawer(),
+                body: FutureBuilder(
+                    future: fetchAnimal(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.data == null) {
+                            return const Center(child: CircularProgressIndicator());
+                        } else {
+                            if (!snapshot.hasData) {
+                            return const Column(
+                                children: [
+                                Text(
+                                    "Tidak ada data binatang.",
+                                    style:
+                                        TextStyle(color: Color(0xff59A5D8), fontSize: 20),
+                                ),
+                                SizedBox(height: 8),
+                                ],
+                            );
+                        } else {
+                            return ListView.builder(
+                                itemCount: snapshot.data!.length,
+                                itemBuilder: (_, index) => InkWell (
+                                onTap: () {
+                                    final animal = snapshot.data![index];
+                                    Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => AnimalDetails(animal: animal)),
+                                    );
+                                },
+                                child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12),
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                            Text(
+                                            "${snapshot.data![index].fields.name}",
+                                            style: const TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                            ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text("${snapshot.data![index].fields.amount}"),
+                                            // const SizedBox(height: 10),
+                                            // Text("${snapshot.data![index].fields.family}"),
+                                            // const SizedBox(height: 10),
+                                            // Text("${snapshot.data![index].fields.animalClass}"),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                                "${snapshot.data![index].fields.description}")
+                                        ],
+                                        ),
+                                    )));
+                            }
+                        }
+                    }));
+            }
+        }
+</ul>
+</li>
+</ol>
+</details>

@@ -1,8 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:safarei_mobile/widgets/left_drawer.dart';
-import 'package:safarei_mobile/widgets/animal_card.dart';
+import 'dart:convert';
 
-List<Animal> animals = [];
+import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:safarei_mobile/screens/menu.dart';
+import 'package:safarei_mobile/widgets/animal_card.dart';
+import 'package:safarei_mobile/widgets/left_drawer.dart';
+
+List<Animalz> animals = [];
 
 class SafareiFormPage extends StatefulWidget {
     const SafareiFormPage({super.key});
@@ -20,11 +25,12 @@ class _SafareiFormPageState extends State<SafareiFormPage> {
     String _description = "";
     @override
     Widget build(BuildContext context) {
+      final request = context.watch<CookieRequest>();
       return Scaffold(
         appBar: AppBar(
           title: const Center(
             child: Text(
-              'Form Tambah Item',
+              'Form Tambah Animal',
             ),
           ),
           backgroundColor: Colors.black,
@@ -54,7 +60,7 @@ class _SafareiFormPageState extends State<SafareiFormPage> {
                     },
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return "Name cannot be empty!";
+                        return "Nama tidak boleh kosong!";
                       }
                       return null;
                     },
@@ -164,41 +170,36 @@ class _SafareiFormPageState extends State<SafareiFormPage> {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.black),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          animals.add(Animal(_name, _amount, _family, _animalClass, _description));
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Item berhasil tersimpan'),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Name: $_name'),
-                                      Text('Amount: $_amount'),
-                                      Text('Family: $_family'),
-                                      Text('Class: $_animalClass'),
-                                      Text('Description: $_description'),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        _formKey.currentState!.reset();
+                            animals.add(Animalz(_name, _amount, _family, _animalClass, _description));
+                            final response = await request.postJson(
+                            "https://athira-reika-tugas.pbp.cs.ui.ac.id/create-flutter/",
+                            jsonEncode(<String, String>{
+                                'name': _name,
+                                'amount': _amount.toString(),
+                                'family': _family,
+                                'animal_class': _animalClass,
+                                'description': _description,
+                            }));
+                            if (response['status'] == 'success') {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                content: Text("Hewan baru berhasil disimpan!"),
+                                ));
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                                );
+                            } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content:
+                                        Text("Terdapat kesalahan, silakan coba lagi."),
+                                ));
+                            }
                         }
-                      },
+                    },
                       child: const Text(
                         "Save",
                         style: TextStyle(color: Colors.white),

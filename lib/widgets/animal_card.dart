@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Animal {
+class Animalz {
   String name;
   int amount;
   String family;
   String animalClass;
   String description;
 
-  Animal(this.name, this.amount, this.family, this.animalClass, this.description);
+  Animalz(this.name, this.amount, this.family, this.animalClass, this.description);
 }
 
-class AnimalCard extends StatelessWidget {
-  final Animal animal;
+class AnimalzCard extends StatelessWidget {
+  final Animalz animal;
 
-  const AnimalCard(this.animal, {super.key}); // Constructor
+  const AnimalzCard(this.animal, {super.key}); // Constructor
 
   @override
   Widget build(BuildContext context) {

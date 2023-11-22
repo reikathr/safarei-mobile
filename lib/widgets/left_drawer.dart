@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safarei_mobile/screens/animal_list.dart';
 import 'package:safarei_mobile/screens/menu.dart';
 import 'package:safarei_mobile/screens/safarei_form.dart';
 import 'package:safarei_mobile/screens/safarei_animalpage.dart';
@@ -59,13 +60,24 @@ class LeftDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.checklist),
+              leading: const Icon(Icons.remove_red_eye_outlined),
               title: const Text('Lihat Item'),
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const SafareiAnimalPage()));
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.checklist),
+              title: const Text('Daftar Item'),
+              onTap: () {
+                  // Route menu ke halaman produk
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AnimalListPage()),
+        );
+    },
+),
         ],
       ),
     );
